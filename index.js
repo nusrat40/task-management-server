@@ -79,25 +79,22 @@ async function run() {
       });
 
       app.patch('/tasks/:id', async (req, res) => {
-        const id=req.params.id;
-        const item = req.body;
-        
-        const filter = { _id: new ObjectId(id) }
+        const id = req.params.id;
+        const { title, description, category } = req.body;
+  
+        const filter = { _id: new ObjectId(id) };
         const updatedTask = {
           $set: {
-            title:item.title,
-            description:item.description,
-            category:item.category
-          }
-        }
+            title,
+            description,
+            category,
+          },
+        };
   
-        const result = await taskCollection.updateOne(filter, updatedTask)
+        const result = await taskCollection.updateOne(filter, updatedTask);
         res.send(result);
       });
   
-
-      
-
     
     app.delete('/tasks/:id', async (req, res) => {
         const id = req.params.id;
