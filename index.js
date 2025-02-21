@@ -28,23 +28,83 @@ async function run() {
     await client.connect();
 
     const userCollection = client.db("taskManager").collection("users");
+    const taskCollection = client.db("taskManager").collection("tasks");
+
 
     //users 
-
     app.get('/users', async(req,res)=>{
         const cursor = userCollection.find();
         const result = await cursor.toArray();
         res.send(result);
       })
-  
 
-
-    app.post("/users", async (req, res) => {
+      app.post("/users", async (req, res) => {
         const user = req.body;
+  
+        const query = { email: user.email };
+        const existingUser = await userCollection.findOne(query);
+        if (existingUser) {
+          return res.send({ message: "user already exists", insertedId: null });
+        }
+  
         const result = await userCollection.insertOne(user);
         res.send(result);
       });
+
+      //tasks
+
+      app.get('/tasks', async (req, res) => {
+        const email = req.query.email;
+        let filter = {};
+        if (email) {
+            filter.userEmail = email;  
+        }
+        const result = await taskCollection.find(filter).toArray();
+        res.send(result);
+    });
+
+    app.get('/tasks/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await taskCollection.findOne(query);
+      res.send(result);
+    });
+
+
+      app.post('/tasks', async(req,res)=>{
+        const tasks =req.body;
+        const result=await taskCollection.insertOne(tasks);
+        res.send(result);
   
+      });
+
+      app.patch('/tasks/:id', async (req, res) => {
+        const id=req.params.id;
+        const item = req.body;
+        
+        const filter = { _id: new ObjectId(id) }
+        const updatedTask = {
+          $set: {
+            title:item.title,
+            description:item.description,
+            category:item.category
+          }
+        }
+  
+        const result = await taskCollection.updateOne(filter, updatedTask)
+        res.send(result);
+      });
+  
+
+      
+
+    
+    app.delete('/tasks/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) }
+        const result = await taskCollection.deleteOne(query);
+        res.send(result);
+      });
 
 
 
