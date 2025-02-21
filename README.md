@@ -2,7 +2,7 @@
 
 A modern, intuitive task management application built with React and integrated with Firebase for user authentication and task management. The app supports drag-and-drop functionality for task organization and provides a calendar view to manage tasks.
 ## Live Demo
-Check out the live website here: [Live Demo](https://study-platform-a9b9a.web.app/)
+Check out the live website here: [Live Demo](https://task-management-1d00a.web.app/)
 
 ## Technologies Used  
 The project is built with:  
